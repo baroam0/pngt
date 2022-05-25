@@ -8,8 +8,8 @@ class Paciente(models.Model):
     ]
 
     idsigho = models.CharField(max_length=100, null=True, blank=True)
-    apellido = models.CharField(max_length=100)
-    nombre = models.CharField(max_length=100) 
+    apellido = models.CharField(max_length=100, null=True, blank=True)
+    nombre = models.CharField(max_length=100, null=True, blank=True) 
     numerodocumento = models.CharField(max_length=100)
     fechanacimiento = models.DateField(null=True, blank=True)
     sexo = models.CharField(

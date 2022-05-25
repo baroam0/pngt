@@ -36,23 +36,27 @@ for paciente in pacientes:
     #lista.append(tupla)
 
     for t in tupla:
-        if i < 500:
-            paciente = Paciente(
-                idsigho=idpaciente,
-                apellido=apellido,
-                nombre=nombre,
-                numerodocumento=numerodocumento,
-                fechanacimiento=fechanacimiento,
-                sexo=sexo,
-                pais=pais,
-                provincia=provincia,
-                partido=partido,
-                localidad=localidad,
-                barrio=barrio,
-                domicilio=domicilio
-                )
-            paciente.save()
-            i = i + 1
+        if i < 1000:
+            try:
+                consulta = Paciente.objects.get(idsigho=idpaciente)
+            except:
+                paciente = Paciente(
+                    idsigho=idpaciente,
+                    apellido=apellido,
+                    nombre=nombre,
+                    numerodocumento=numerodocumento,
+                    fechanacimiento=fechanacimiento,
+                    sexo=sexo,
+                    pais=pais,
+                    provincia=provincia,
+                    partido=partido,
+                    localidad=localidad,
+                    barrio=barrio,
+                    domicilio=domicilio
+                    )
+                paciente.save()
+                i = i + 1
+    tupla = None
 
 """
 def grabarpersona(dataset):
