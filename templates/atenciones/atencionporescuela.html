@@ -1,0 +1,191 @@
+
+{% extends 'base.html' %}
+
+{%block content %}
+
+
+<div class="col-md-12">
+  <div class="card">
+    <div class="card-header">
+      <h3>Informe Obra Social por Mes</h3>
+
+      <!--div class="card-tools"-->
+        
+        <label for="select-escuela">Escuelas: </label>
+        <select class="form-control" id="select-escuela">
+          {% for escuela in escuelas%}
+            <option value={{escuela.pk}}>
+              {{escuela.descripcion.upper}}
+            </option>
+          {% endfor %}
+        </select>
+
+        
+
+        
+
+        <!--button type="button" class="btn btn-default" title="Buscar!">
+          <i class="fas fa-search"></i>
+        </button-->
+      <!--/div-->
+    </div>
+    <!-- /.card-header -->
+    
+    <!-- /.card-body -->
+  </div>
+  <!-- /.card -->
+</div>
+
+
+
+<div class="col-md-12">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Detalle Atencion por Escuela.</h3>
+
+      
+
+      <div class="card-tools">
+        <!--button type="button" class="btn btn-default" title="Imprimir listado!" onclick="javascrit:exportTableToExcel()">
+          <i class="fas fa-file-excel"></i>
+        </button-->
+      </div>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body p-0">
+      <!--table class="table" id="table-turnosotorgados">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table-->
+      <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+
+    </div>
+    <!-- /.card-body -->
+  </div>
+  <!-- /.card -->
+</div>
+
+{% endblock %}
+
+{% block js_extra %}
+  <script>
+    $(document).ready(function () {
+      //$("#select-obrasocial").select2();
+
+      /*
+      var xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
+      var yValues = [55, 49, 44, 24, 15];
+      var barColors = ["red", "green","blue","orange","brown"];
+
+      new Chart("myChart", {
+        type: "bar",
+        data: {
+          labels: xValues,
+          datasets: [{
+            backgroundColor: barColors,
+            data: yValues
+          }]
+        },
+
+        options: {
+          legend: {display: false},
+          title: {
+            display: true,
+            text: "World Wine Production 2018"
+          }
+        }
+        
+      });*/
+
+    });
+
+
+    function GrafBarra(escuela){
+      $.ajax({
+        type: "GET",
+        url: "/ajaxatencionescuela/",
+        data: {
+          "escuela": escuela,
+        },
+        success: function (response) {
+          
+          //var xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
+          var xValues = response.practicas;
+          //var yValues = [55, 49, 44, 24, 15];
+          var yValues = response.cantidades;
+          var barColors = ["red", "green","blue"];
+          console.log(response.practicas)
+          console.log(response.cantidades)
+          new Chart("myChart", {
+            type: "bar",
+            data: {
+              labels: xValues,
+              datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+              }]
+            },
+
+            options: {
+              legend: {display: false},
+              title: {
+                display: true,
+                text: response.escuela
+              }
+            }
+            
+          });
+        }
+      });
+    }
+
+
+    function exportTableToExcel(filename = ''){
+            //var tableID = document.getElementById("tablaDatos");
+            
+            var downloadLink;
+            var dataType = 'application/vnd.ms-excel';
+            var tableSelect = document.getElementById("table-turnosotorgados");
+            var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+    
+            // Specify file name
+            filename = filename?filename+'.xls':'excel_data.xls';
+    
+            // Create download link element
+            downloadLink = document.createElement("a");
+    
+            document.body.appendChild(downloadLink);
+    
+            if(navigator.msSaveOrOpenBlob){
+                var blob = new Blob(['ufeff', tableHTML], {
+                    type: dataType
+                });
+                navigator.msSaveOrOpenBlob( blob, filename);
+            }else{
+                // Create a link to the file
+                downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+    
+                // Setting the file name
+                downloadLink.download = filename;
+        
+                //triggering the function
+                downloadLink.click();
+            }
+        }
+
+    $("#select-escuela").change(function() {
+      var escuela = $("#select-escuela").val();
+
+      GrafBarra(escuela);
+
+    });
+
+
+  </script>
+{% endblock %}

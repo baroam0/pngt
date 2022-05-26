@@ -16,6 +16,25 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from escuelas.views import listadoescuelas, nuevaescuela, editarescuela
+from pacientes.views import listadopaciente, nuevopaciente, editarpaciente
+from atenciones.views import (listadoatenciones, nuevaatencion,
+    listadoespecialidades, nuevaespecialidad, editarespecialidad,
+    ajaxgraficoatencionporescuela, atencionporescuela)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('atencionporescuela/', atencionporescuela),
+    path('ajaxatencionescuela/', ajaxgraficoatencionporescuela),
+    path('atencioneslistado/', listadoatenciones),
+    path('atencionnueva/', nuevaatencion),
+    path('practicaslistado/', listadoespecialidades),
+    path('practicanueva/', nuevaespecialidad),
+    path('practicaeditar/<int:pk>', editarespecialidad),
+    path('escuelalistado/', listadoescuelas),
+    path('escuelanueva/', nuevaescuela),
+    path('escuelaeditar/<int:pk>', editarescuela),
+    path('pacientelistado/', listadopaciente),
+    path('pacientenuevo/', nuevopaciente),
+    path('pacienteeditar/<int:pk>', editarpaciente),
 ]

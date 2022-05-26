@@ -1,0 +1,109 @@
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="container">
+
+        <br>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <h2>TURNOS</h2>
+            </div>
+            <div class="col-sm-4"></div>
+        </div>
+
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-warning" role="alert">
+                    {{message}}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+
+        <div class="row">            
+            <div class="col-12">
+                <hr>
+                <form method="POST" id="frmdatos">{% csrf_token %}
+                    
+                    {{ form.as_p }}
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-2">
+                            <button class="btn btn-primary" id="btn-guardar" type="submit">
+                                <i data-feather="check"></i>
+                                Aceptar
+                            </button>
+                        </div>
+
+                        <div class="col-8">
+                        </div>
+
+                        <div class="col-2">    
+                            <button type="button" class="btn btn-danger" id="btn-cancelar" onclick="IrListadoTurno()">
+                                <i data-feather="x-circle"></i>
+                                Cancelar
+                            </button>
+                        </div>                        
+                    </div>
+                </form>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js_extra %}
+
+    <script>
+
+        $(document).ready(function () {
+            $('#id_paciente').select2();
+        });
+
+        
+        $('#id_paciente').on('select2:select', function (e) {
+            var parametro = $(this).val();
+            CargarObraSocial(parametro);
+            CargarProfesionalTratante(parametro);
+        });
+
+        function IrListadoTurno() {
+            window.location.replace("/turnolistado");
+        }
+
+        function CargarObraSocial(parametro){
+            $("#id_obrasocial").empty();
+            $.getJSON("/ajax-obrasocialpaciente/" + parametro,
+                function (data, textStatus, jqXHR) {
+                    $.each(data, function (indexInArray, valueOfElement) { 
+                        var elemento = '<option value="' + valueOfElement["id_obrasocial"] + '">' + valueOfElement["descripcion_obrasocial"] + '</option>'                       
+                        $('#id_obrasocial').append(elemento);
+                    });
+                }
+            );
+            
+        }
+
+        function CargarProfesionalTratante(parametro){
+            $("#id_profesional").empty();
+            $.getJSON("/ajax-profesionaltratantepaciente/" + parametro,
+                function (data, textStatus, jqXHR) {
+                    $.each(data, function (indexInArray, valueOfElement) { 
+                        $("#id_profesional").append($("<option />").val(valueOfElement["id_profesional"]).text(valueOfElement["profesional"]));
+                    });
+                }
+            );
+            
+        }
+
+    </script>
+
+{% endblock %}

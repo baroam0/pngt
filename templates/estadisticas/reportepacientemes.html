@@ -1,0 +1,212 @@
+
+{% extends 'base.html' %}
+
+{%block content %}
+
+
+<div class="col-md-12">
+  <div class="card">
+    <div class="card-header">
+      <h3>Informe Pacientes por Mes</h3>
+
+      <!--div class="card-tools"-->
+
+        <label for="select-profesional">Profesional: </label>
+          <select class="form-control" id="select-profesional">
+            {% for profesional in profesionales %}
+              <option value={{profesional.pk}}>
+                {{profesional}}
+              </option>
+            {% endfor %}
+          </select>
+
+        <label for="select-mes">Mes: </label>
+        <select class="form-control" id="select-mes">
+            <option value=1>
+              Enero
+            </option>
+            <option value=2>
+              Febrero
+            </option>
+            <option value=3>
+              Marzo
+            </option>
+            <option value=4>
+              Abril
+            </option>
+            <option value=5>
+              Mayo
+            </option>
+            <option value=6>
+              Junio
+            </option>
+            <option value=7>
+              Julio
+            </option>
+            <option value=8>
+              Agosto
+            </option>
+            <option value=9>
+              Septiembre
+            </option>
+            <option value=10>
+              Octubre
+            </option>
+            <option value=11>
+              Noviembre
+            </option>
+            <option value=12>
+              Diciembre
+            </option>
+        </select>
+
+        <label for="select-anio"> Año: </label>
+          <select class="form-control" id="select-anio">
+              <option value=2021>
+                2021
+              </option>
+          </select>
+
+        <!--button type="button" class="btn btn-default" title="Buscar!">
+          <i class="fas fa-search"></i>
+        </button-->
+      <!--/div-->
+    </div>
+    <!-- /.card-header -->
+    
+    <!-- /.card-body -->
+  </div>
+  <!-- /.card -->
+</div>
+
+
+
+<div class="col-md-12">
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Detalle General Turnos Otorgados</h3>
+
+      
+
+      <div class="card-tools">
+        <button type="button" class="btn btn-default" title="Imprimir listado!" onclick="javascrit:exportTableToExcel()">
+          <i class="fas fa-file-excel"></i>
+        </button>
+      </div>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body p-0">
+      <table class="table" id="table-turnosotorgados">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Fecha</th>
+            <th>Obra Social </th>
+            <th>Profesional </th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+    <!-- /.card-body -->
+  </div>
+  <!-- /.card -->
+</div>
+
+{% endblock %}
+
+{% block js_extra %}
+  <script>
+    $(document).ready(function () {
+      //$("#select-obrasocial").select2();
+    });
+
+
+    function TotalTurnos(profesional, mes, anio){
+      $.ajax({
+        type: "GET",
+        url: "/estadisticaconsultapacientemes/",
+        data: {
+          "profesional": profesional,
+          "mes": mes,
+          "anio": anio,
+        },
+        success: function (response) {
+          $("#table-turnosotorgados tbody").html('');
+          var newRowContent = "<tr>";
+          $.each(response, function (indexInArray, valueOfElement) { 
+            newRowContent = "<tr><td>" + valueOfElement['paciente'] + "</td>"; 
+            newRowContent = newRowContent + "<td>" + valueOfElement['fecha'] + "</td>"; 
+            newRowContent = newRowContent + "<td>" + valueOfElement['obrasocial'] + "</td>"; 
+            newRowContent = newRowContent + "<td>" + valueOfElement['profesional'] + "</td>"; 
+            $("#table-turnosotorgados tbody").append(newRowContent);
+          });
+          
+        }
+      });
+    }
+
+
+    function exportTableToExcel(filename = ''){
+            //var tableID = document.getElementById("tablaDatos");
+            
+            var downloadLink;
+            var dataType = 'application/vnd.ms-excel';
+            var tableSelect = document.getElementById("table-turnosotorgados");
+            var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+    
+            // Specify file name
+            filename = filename?filename+'.xls':'excel_data.xls';
+    
+            // Create download link element
+            downloadLink = document.createElement("a");
+    
+            document.body.appendChild(downloadLink);
+    
+            if(navigator.msSaveOrOpenBlob){
+                var blob = new Blob(['ufeff', tableHTML], {
+                    type: dataType
+                });
+                navigator.msSaveOrOpenBlob( blob, filename);
+            }else{
+                // Create a link to the file
+                downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+    
+                // Setting the file name
+                downloadLink.download = filename;
+        
+                //triggering the function
+                downloadLink.click();
+            }
+        }
+
+    $("#select-profesional").change(function() {
+      var profesional = $("#select-profesional").val();
+      var mes = $("#select-mes").val();
+      var anio = $("#select-anio").val();
+
+      TotalTurnos(profesional,mes,anio);
+
+    });
+
+    $("#select-mes").change(function() {
+      var profesional = $("#select-profesional").val();
+      var mes = $("#select-mes").val();
+      var anio = $("#select-anio").val();
+
+      TotalTurnos(profesional,mes,anio);
+
+    });
+
+    $("#select-anio").change(function() {
+      var profesional = $("#select-profesional").val();
+      var mes = $("#select-mes").val();
+      var anio = $("#select-anio").val();
+
+      TotalTurnos(profesional,mes,anio);
+
+    });
+
+  </script>
+{% endblock %}

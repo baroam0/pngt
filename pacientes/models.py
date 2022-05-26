@@ -3,8 +3,8 @@ from django.db import models
 
 class Paciente(models.Model):
     SEX_CHOICES = [
-        ("masculino", "masculino"),
-        ("femenino", "femenino")
+        ("Masculino", "Masculino"),
+        ("Femenino", "Femenino")
     ]
 
     idsigho = models.CharField(max_length=100, null=True, blank=True)

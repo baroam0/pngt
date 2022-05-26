@@ -1,0 +1,394 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+
+        <style>
+            .select2-container{
+                width: 100%!important;
+            }
+            .select2-search--dropdown .select2-search__field {
+                width: 98%;
+            }
+        </style>
+
+
+        <form action="/turnolistado" method="GET">
+            <div class="form-inline">
+                <div class="col-4">
+                </div>
+                <div class="col-4">
+                    <select class='form-control' id='select_profesional_busqueda' name='select_profesional_busqueda'>
+                        <option value=0> Selecciona Profesional</option>
+                        {% for profesional in profesionales %}
+                            <option value={{profesional.pk}}>
+                                {{profesional.usuario.last_name}}, {{profesional.usuario.first_name}}
+                            </option>
+                            
+                        {% endfor%}
+                    </select>
+                </div>
+                <div class="col-4">
+                    <!--input class="form-control" id="txtBuscar" name="txtBuscar" placeholder="Buscar...."-->
+                    
+                    <button type="submit" class="btn btn-default" title="Buscar!">
+                        <i class="fas fa-search"></i>
+                    </button>
+
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+
+                    <!--button type="button" data-toggle="modal" data-target="#modal-turno" class="btn btn-default"-->
+                    <button type="button" onclick="NuevoTurno()" class="btn btn-default">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+
+
+        <div class="modal fade" id="modal-turno">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Datos del Turno <label id="lbl_profesional"></label></h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="form-modalturno">
+
+                            <label for="id_numeroafiliado">Paciente Registrado:</label>
+
+                            <select id="modal-select-paciente">
+                                {% for paciente in pacientes %}
+                                    <option value={{paciente.pk}}>
+                                        {{paciente}}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                                                
+                            <div class="form-group">
+                                <label>Fecha:</label>
+                                <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                                    <input id="txt_fecha" type="text" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                                    <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Hora:</label>
+        
+                                <div class="input-group date" id="timepicker" data-target-input="nearest">
+                                    <input type="text" id="txt-horaturno" class="form-control datetimepicker-input" data-target="#timepicker"/>
+                                    <div class="input-group-append" data-target="#timepicker" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <div class="form-group">
+                                <label for="modal-select-obrasocial">Obras Sociales:</label>
+
+                                <select id="modal-select-obrasocial" class="form-control">
+                                    {% for obrasocial in obrassociales %}
+                                        <option value={{obrasocial.pk}}>
+                                            {{obrasocial.abreviatura.upper}}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                        <p>
+                            <div class="form-group">
+                                <label for="modal-chk-asistio">Asistio:</label>
+                                <input type="checkbox" id="modal-chk-asistio">
+                            </div>
+                        </p>
+
+                        <p>
+                            <div class="form-group">
+                                <label for="modal-chk-entrega">Entrega: </label>
+                                <input type="checkbox" id="modal-chk-entrega">
+                            </div>
+                        </p>
+
+                        <p>
+                            <div class="form-group">
+                                <label for="modal-chk-entregaparcial">Entrega Parcial: </label>
+                                <input type="checkbox" id="modal-chk-entregaparcial">
+                            </div>
+                        </p>
+
+                        <p>
+                            <div class="form-group">
+                                <label for="modal-observacion">Observacion: </label>
+                                <textarea id="modal-observacion" class="form-control"></textarea>
+                            </div>
+                        </p>
+
+                    </form>
+
+                </div>
+                <div class="modal-footer justify-content-between">
+                    
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <i class="fas fa-times-circle"></i>
+                        Cerrar
+                    </button>
+
+                    <button type="button" id="btn-modal-borrar" class="btn btn-danger" onclick="javascript:BorrarTurno()" >
+                        <i class="fas fa-trash"></i>
+                        Borrar
+                    </button>
+                    
+                    <button type="button" class="btn btn-primary" onclick="javascrit:GrabarTurno()">
+                        <i class="fas fa-save"></i> 
+                        Guardar
+                    </button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+    </div>
+
+    <div id="calendar"></div>
+{% endblock %}
+
+
+{% block js_extra %}
+    <script>
+        
+        var editar = false;
+        var turno_id = "";
+        var profesional_id = "";
+        $(document).ready(function () {
+            
+            var parametroselect = "";
+            parametroselect = ObtenerParametroURL();
+
+            if(parametroselect==null){
+            }else{
+                $('#select_profesional_busqueda').val(parametroselect);
+            }
+
+            $('#reservationdate').datetimepicker({
+                format: 'L',
+                locale: 'es'
+            });
+
+
+            $('#timepicker').datetimepicker({
+                format: 'LT',
+                locale: 'es'
+            })
+
+            $("#modal-select-paciente").select2();
+            $("#modal-select-obrasocial").select2();
+
+            var Calendar = FullCalendar.Calendar;
+            var calendarEl = document.getElementById('calendar');    
+
+            var calendar = new Calendar(calendarEl, {
+                locale: 'es',
+                plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid' ],
+                buttonText: {
+                    today: 'hoy',
+                },
+                events: [
+                    {% for r in resultados %}
+                        {
+                            id: '{{r.pk}}',
+                            title: '{{r.paciente}}',
+                            start: '{{r.fechahora.isoformat}}',
+                            end: '{{r.fechahora.isoformat}}',
+
+                            {% if r.asistio == True %}
+                                {% if r.entrega == True%}
+                                    backgroundColor: 'light blue',
+                                {% else %}
+                                    backgroundColor: 'orange',
+                                {% endif %}
+                            {% else %}
+                                backgroundColor: 'red',
+                            {% endif %}
+
+                        },
+                    {% endfor %}
+                ],             
+
+                eventClick: function(info) {
+                    var eventObj = info.event;
+                    //alert(eventObj.title);
+                    //alert(eventObj.id);
+                    CargaTurnoModal(eventObj.id);
+                },
+            })
+            calendar.render();
+        });
+
+        function BorrarTurno(){
+
+            var mensaje = "Desea borrar el turno?";
+            var confirmar = confirm(mensaje);
+
+            if(confirmar == true){
+                $.ajax({
+                    type: "DELETE",
+                    url: "/turnoborrar/" + turno_id + "/",
+                    success: function (response) {
+                        alert(response.mensaje);
+                        location.reload(true);
+                    }
+                });
+            }
+        }
+
+        function GrabarTurno(){
+            if(editar==true){
+                var profesional_id = $("#select_profesional_busqueda").val();
+                var paciente_id = $("#modal-select-paciente").val();
+                var fecha = $("#reservationdate").find("input").val();
+                var hora = $("#timepicker").find("input").val();
+                var obrasocial = $("#modal-select-obrasocial").val();
+
+                var asistio = document.getElementById("modal-chk-asistio").checked;
+                var entrega = document.getElementById("modal-chk-entrega").checked;
+                var entregaparcial = document.getElementById("modal-chk-entregaparcial").checked;
+                var observacion = $("#modal-observacion").val()
+
+                if(fecha=="" || hora==""){
+                    alert("Por favor ingrese una fecha/hora")
+                }else{
+                    $.ajax({
+                        type: "POST",
+                        url: "/turnoeditar/" + turno_id + "/",
+                        data: {
+                            "profesional_id": profesional_id,
+                            "paciente_id": paciente_id,
+                            "fecha": fecha,
+                            "hora": hora,
+                            "obrasocial": obrasocial,
+                            "asistio": asistio,
+                            "entrega": entrega,
+                            "entregaparcial": entregaparcial,
+                            "observacion": observacion
+                        },
+                        success: function (response) {
+                            console.log(editar);
+                            if(response.status==200){
+                                editar = false;
+                                alert("Se ha actualizado el turno");
+                                location.reload(true);
+                            }else{
+                                alert("El turno no esta disponible");
+                            }
+                        }
+                    });
+                }
+
+
+            }else{
+                var profesional_id = $("#select_profesional_busqueda").val();
+                var paciente_id = $("#modal-select-paciente").val();
+                var fecha = $("#reservationdate").find("input").val();
+                var hora = $("#timepicker").find("input").val();
+                var obrasocial = $("#modal-select-obrasocial").val();
+
+                var asistio = document.getElementById("modal-chk-asistio").checked;
+                var entrega = document.getElementById("modal-chk-entrega").checked;
+                var entregaparcial = document.getElementById("modal-chk-entregaparcial").checked;
+                var observacion = $("#modal-observacion").val()
+
+                if(fecha=="" || hora==""){
+                    alert("Por favor ingrese una fecha/hora")
+                }else{
+                    $.ajax({
+                        type: "POST",
+                        url: "/turnonuevo/",
+                        data: {
+                            "profesional_id": profesional_id,
+                            "paciente_id": paciente_id,
+                            "fecha": fecha,
+                            "hora": hora,
+                            "obrasocial": obrasocial,
+                            "asistio": asistio,
+                            "entrega": entrega,
+                            "entregaparcial": entregaparcial,
+                            "observacion": observacion
+                        },
+                        success: function (response) {
+                            if(response.status == 200){
+                                alert(response.mensaje);
+                                location.reload(true);
+                            }else{
+                                alert(response.mensaje)
+                            }
+                            
+                        }
+                    });
+                }
+            }
+        }
+
+        function CargaTurnoModal(id){
+            editar = true;
+            $("#btn-modal-borrar").prop('disabled', false);
+
+            $("#modal-turno").modal();
+
+            $.ajax({
+                type: "GET",
+                url: "/cargaturnomodal/" + id,
+                success: function (response) {
+                    turno_id = response.turno_id;
+                    profesional_id = response.profesional_id;
+                    $('#lbl_profesional').text(response.pro);
+                    $("#modal-select-paciente").val(response.paciente_id);
+                    $('#modal-select-paciente').trigger('change'); 
+                    $("#reservationdate").find("input").val(response.fecha);
+                    $("#timepicker").find("input").val(response.hora);
+                    $("#modal-select-obrasocial").val(response.obrasocial_id);
+                    $('#modal-select-obrasocial').trigger('change'); 
+                    document.getElementById("modal-chk-asistio").checked = response.asistio;
+                    document.getElementById("modal-chk-entrega").checked = response.entrega;
+                    document.getElementById("modal-chk-entregaparcial").checked = response.entrega_parcial;
+                    $("#modal-observacion").val(response.observacion)
+                }
+            });
+        }
+
+        function NuevoTurno(){
+            $("#btn-modal-borrar").prop('disabled', true);
+
+            if($("#select_profesional_busqueda").val()==0){
+                alert("Por favor elija un profesional")
+            }else{
+                var profesional = $('#select_profesional_busqueda').find(':selected');
+                $('#lbl_profesional').text(profesional.text());
+                $("#modal-turno").modal();
+            }
+        }
+
+
+        function ObtenerParametroURL(){
+            var queryString = window.location.search;
+            var urlParams = new URLSearchParams(queryString);
+            var parametroprofesional = urlParams.get('select_profesional_busqueda');
+            return parametroprofesional;
+        }
+
+    </script>
+
+    
+{% endblock %}
