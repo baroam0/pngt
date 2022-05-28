@@ -72,8 +72,8 @@
                         <th>Apellido</th>
                         <th>Nombre</th>
                         <th>Numero Documento</th>
-                        <th>Fecha Nacimiento</th>
-                        <th>Accion</th>
+                        <th>Editar</th>
+                        <th>Atencion</th>
                     </tr>
                 </thead>
 
@@ -83,10 +83,15 @@
                         <td>{{resultado.apellido.upper }}</td>
                         <td>{{resultado.nombre.upper }}</td>
                         <td>{{resultado.numerodocumento}}</td>
-                        <td>{{resultado.fechanacimiento}}</td>
+                        <!--td>{{resultado.fechanacimiento}}</td-->
                         <td>
                             <button type="button" class="btn btn-link btn-sm" onclick="location.href='/pacienteeditar/' + {{ resultado.pk }}">
                                 <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-link btn-sm" onclick="location.href='/atencionlink/' + {{ resultado.pk }}">
+                                <i class="fas fa-calendar-alt"></i>
                             </button>
                         </td>
                     </tr>
@@ -167,6 +172,13 @@
     <script>
 
         $(document).ready(function () {
+
+            var parametro = "{{parametro}}";
+
+            if(parametro){
+                 $('#txtBuscar').val("{{parametro}}");
+            }
+
             var selectProfesional = "";
             selectProfesional = ObtenerParametroURL();
 

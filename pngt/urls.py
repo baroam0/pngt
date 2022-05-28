@@ -16,18 +16,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from .views import home
 from escuelas.views import listadoescuelas, nuevaescuela, editarescuela
-from pacientes.views import listadopaciente, nuevopaciente, editarpaciente
-from atenciones.views import (listadoatenciones, nuevaatencion,
+from pacientes.views import listadopaciente, nuevopaciente, editarpaciente, ajaxpaciente, nuevopacientepreload
+from atenciones.views import (listadoatenciones, nuevaatencion,editaratencion,
     listadoespecialidades, nuevaespecialidad, editarespecialidad,
-    ajaxgraficoatencionporescuela, atencionporescuela)
+    ajaxgraficoatencionporescuela, atencionporescuela, nuevaatencionlink, renderticket)
 
 urlpatterns = [
+    path('', home),
     path('admin/', admin.site.urls),
+    path('ajaxpaciente/', ajaxpaciente),
     path('atencionporescuela/', atencionporescuela),
     path('ajaxatencionescuela/', ajaxgraficoatencionporescuela),
     path('atencioneslistado/', listadoatenciones),
     path('atencionnueva/', nuevaatencion),
+    path('atencionlink/<int:pk>', nuevaatencionlink),
+    path('atencioneditar/<int:pk>', editaratencion),
     path('practicaslistado/', listadoespecialidades),
     path('practicanueva/', nuevaespecialidad),
     path('practicaeditar/<int:pk>', editarespecialidad),
@@ -36,5 +41,7 @@ urlpatterns = [
     path('escuelaeditar/<int:pk>', editarescuela),
     path('pacientelistado/', listadopaciente),
     path('pacientenuevo/', nuevopaciente),
+    path('pacientenuevopreload/<str:rawdata>', nuevopacientepreload),
     path('pacienteeditar/<int:pk>', editarpaciente),
+    path('renderticket/<int:pk>', renderticket)
 ]

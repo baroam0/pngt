@@ -45,19 +45,10 @@
                             <i class="fas fa-search"></i>
                         </button>
 
-                        <button type="button" class="btn btn-default" title="Nuevo Paciente!" onclick="location.href='/atencionnueva'">
+                        <!--button type="button" class="btn btn-default" title="Nueva Atencion" onclick="location.href='/atencionnueva'">
                             <i class="fas fa-plus"></i>
-                        </button>
+                        </button-->
                     </div>
-
-
-                    <!--button type="button" class="btn btn-default" title="Imprimir listado!" onclick="javascrit:ReporteListado()">
-                        <i class="fas fa-print"></i>
-                    </button>
-
-                    <button type="button" class="btn btn-default" title="Imprimir listado!" onclick="javascrit:exportTableToExcel()">
-                        <i class="fas fa-file-excel"></i>
-                    </button-->
                 </div>
 
                 <div class="col-1">
@@ -85,12 +76,13 @@
                         <td>{{resultado.paciente.numerodocumento}}</td>
                         <td>{{resultado.especialidad.descripcion.upper}}</td>
                         <td>
-                            <button type="button" class="btn btn-link btn-sm" onclick="location.href='/pacienteeditar/' + {{ resultado.pk }}">
+                            <button type="button" class="btn btn-link btn-sm" onclick="location.href='/atencioneditar/' + {{ resultado.pk }}">
                                 <i class="fas fa-pencil-alt"></i>
                             </button>
-                            <button type="button" class="btn btn-link btn-sm" onclick="location.href='/pacienteeditar/' + {{ resultado.pk }}">
+                            <button type="button" class="btn btn-link btn-sm" onclick="location.href='/renderticket/' + {{ resultado.pk }} ">
                                 <i class="fas fa-print"></i>
                             </button>
+                            
                         </td>
                     </tr>
                     {% endfor %}
@@ -233,6 +225,31 @@
             var urlParams = new URLSearchParams(queryString);
             var parametroprofesional = urlParams.get('selectProfesional');
             return parametroprofesional;
+        }
+
+        function Popup(data) 
+        {
+            var myWindow = window.open('', 'Receipt', 'height=400,width=600');
+            myWindow.document.write('<html><head><title>Receipt</title>');
+            /*optional stylesheet*/ //myWindow.document.write('<link rel="stylesheet" href="main.css" type="text/css" />');
+            myWindow.document.write('<style type="text/css"> *, html {margin:0;padding:0;} </style>');
+            myWindow.document.write('</head><body>');
+            myWindow.document.write(data);
+            myWindow.document.write('</body></html>');
+            myWindow.document.close(); // necessary for IE >= 10
+
+            myWindow.onload=function(){ // necessary if the div contain images
+
+                myWindow.focus(); // necessary for IE >= 10
+                myWindow.print();
+                myWindow.close();
+            };
+        }
+
+        function PrintElem()
+        {
+            var htmltemplate ="'<style> body { font-size: 12px; font-family:Calibri; } table { font-size: 12px; font-family:Calibri; } </style> <table style='width:100%'> <tr> <td align ='left'>Fecha</td> <td align ='right'>{{atencion.fecha}}</td> </tr> <tr> <td align ='left'>{{atencion.especialidad.descripcion.upper}}</td> <td align ='right'>{{atencion.paciente.apellido.upper}}, {{atencion.paciente.nombre.upper}}</td>  </tr> <tr> <td align ='left'>Paciente</td> <td align ='right'>{{atencion.paciente}}</td> </tr> </table>"
+            Popup(htmltemplate);
         }
 
     </script>

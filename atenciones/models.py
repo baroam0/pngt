@@ -10,13 +10,14 @@ class Especialidad(models.Model):
 
     def __str__(self):
         return self.descripcion
-    
+
     class Meta:
         verbose_name_plural = "Especialidades"
 
 
 class Atencion(models.Model):
-    fecha = models.DateField(auto_now=True)
+    fecha = models.DateTimeField(auto_now=True)
+    #fecha = models.DateField(auto_now=True)
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE)
     especialidad = models.ForeignKey(
         Especialidad, blank=False, null=False,

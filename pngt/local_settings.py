@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-#g^5pe(0obw=#g9p1t@gwyt4do(p0$c=wirn(#*solg2__ora!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

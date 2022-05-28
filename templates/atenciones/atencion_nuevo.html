@@ -175,18 +175,20 @@
                 }
             });
 
-            $('#id_diagnostico').select2({
+            /*
+
+            $('#id_paciente').select2({
                 language: {
                     inputTooShort: function() {
-                        return 'Por favor ingrese 2 caracteres';
+                        return 'Por favor ingrese 3 caracteres';
                     },
                     noResults: function() {
                         return "No se encontraron resultados";
                     },
                 },
-                minimumInputLength: 2,
+                minimumInputLength: 3,
                 ajax: {
-                    url: '/ajaxcatalogo/',
+                    url: '/ajaxpaciente/',
                     processResults: function (data) {
                         return {
                             results: $.map(data, function (item) {
@@ -199,77 +201,9 @@
                     }
                 }
             });
-
-
-            $('#modal-select-obra-social').select2({
-                language: {
-                    inputTooShort: function() {
-                        return 'Por favor ingrese 2 caracteres';
-                    },
-                    noResults: function() {
-                        return "No se encontraron resultados";
-                    },
-                },
-                minimumInputLength: 2,
-                ajax: {
-                    url: '/ajaxobrasocial/',
-                    processResults: function (data) {
-                        return {
-                            results: $.map(data, function (item) {
-                                return {
-                                    text: item.text,
-                                    id: item.id
-                                }
-                            })
-                        };
-                    }
-                }
-            });
+            */
 
         });
-
-        function EditarPacienteObraSocial(){
-            LimpiarTablaModal();
-
-            var str_url = window.location.href;
-            str_url = str_url.split("/");
-            var id_paciente = str_url.slice(-2)[0]
-
-            var obrasocial = $("#id_obrasocial").val();
-            var numeroafiliado = $("#id_numeroafiliado").val();
-            var observacion = $("#id_observaciones").val();            
-
-            var JsonObj = new Object();
-
-            JsonObj = {
-                "paciente": id_paciente,
-                "paciente_obrasocial": paciente_obrasocial,
-                "obrasocial": obrasocial,
-                "numeroafiliado": numeroafiliado,
-                "observaciones": observacion,
-            }
-
-            $.ajax({
-                type: "POST",
-                url: "/ajax-editarpacienteobrasocial/",
-                data: {
-                    datos: JSON.stringify(JsonObj),
-                }, 
-                success: function (data) {
-                    $.each(data, function (i, item) {
-                        $('<tr id="' + item.id_obrasocial + '">').append(
-                            $('<td>').text(item.id_pacienteobrasocial),
-                            $('<td>').text(item.descripcion),
-                            $('<td>').text(item.numeroafiliado),
-                            $('<td>').text(item.observaciones),
-                            $('<td>').html('<button type="button" class="btn btn-link btn-sm btnSelect" onclick="javascript:LeerFilaTablaModal()"><i class="fas fa-pencil-alt"></i></button>')).appendTo('#tabla-pacienteobrasocial')
-                    });
-                    LimpiarFormularioModal();
-                }
-            });
-
-            editar = false;
-        }
 
 
         function GrabarPacienteObraSocial(){
@@ -318,8 +252,8 @@
             }
             editar = false; 
         }
-
-        function IrListadoAtenciones() {
+                 
+        function IrListadoAtencion() {
             window.location.replace("/atencioneslistado");
         }
 

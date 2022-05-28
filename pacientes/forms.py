@@ -48,3 +48,4 @@ class PacienteForm(forms.ModelForm):
             'fechanacimiento', 'pais', 'provincia','localidad',
             'barrio','domicilio'
             ]
+        exclude = ['ayn']

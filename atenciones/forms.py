@@ -8,7 +8,7 @@ from pacientes.models import Paciente
 
 class AtencionForm(forms.ModelForm):
     paciente = forms.ModelChoiceField(
-        label="Paciente", queryset=Paciente.objects.all(), required=True)
+        label="Paciente", queryset=Paciente.objects.none(), required=True)
     especialidad = forms.ModelChoiceField(
         label="Especialidad",
         queryset=Especialidad.objects.all(),
@@ -41,3 +41,24 @@ class EspecialidadForm(forms.ModelForm):
     class Meta:
         model = Especialidad
         fields = ['descripcion']
+
+
+class AtencionLinkForm(forms.ModelForm):
+    paciente = forms.ModelChoiceField(
+        label="Paciente", queryset=Paciente.objects.all(), required=True)
+    especialidad = forms.ModelChoiceField(
+        label="Especialidad",
+        queryset=Especialidad.objects.all(),
+        required=True
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(AtencionLinkForm, self).__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+    class Meta:
+        model = Atencion
+        fields = ['paciente', 'especialidad']

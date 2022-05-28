@@ -7,8 +7,9 @@ from django.http import JsonResponse
 from django.db.models import Q
 
 from escuelas.models import Escuela
+from pacientes.models import Paciente
 
-from .forms import AtencionForm, EspecialidadForm
+from .forms import AtencionForm, EspecialidadForm, AtencionLinkForm
 from .models import Atencion, Especialidad
 
 
@@ -76,22 +77,25 @@ def nuevaatencion(request):
 def editaratencion(request, pk):
     consulta = Atencion.objects.get(pk=pk)
     
+    paciente = Paciente.objects.filter(pk=consulta.paciente.pk)
+    
     if request.POST:
-        form = AtencionForm(request.POST, instance=consulta)
+        form = AtencionLinkForm(request.POST, instance=consulta)
         if form.is_valid():
             form.save()
             messages.success(request, "SE HA MOFICICADO EL PACIENTE")
             return redirect('/pacientelistado')
         else:
-            return render(request, "atenciones/atencion_nuevo.html", {"form": form})
+            return render(request, "atenciones/atencion_link.html", {"form": form, "paciente": paciente})
     else:
-        form = AtencionForm(instance=consulta)
+        form = AtencionLinkForm(instance=consulta)
 
         return render(
             request,
-            'atenciones/atencion_nuevo.html',
+            'atenciones/atencion_link.html',
             {
                 "form": form,
+                "paciente": paciente
             }
         )
 
@@ -182,9 +186,10 @@ def ajaxgraficoatencionporescuela(request):
         escuela = Escuela.objects.get(pk=request.GET.get("escuela"))
         practicas = list()
         cantidades = list()
-        results = (Atencion.objects.filter(escuela=escuela.pk).values('especialidad').annotate(dcount=Count('especialidad')).order_by())
+        results = (
+            Atencion.objects.filter(escuela=escuela.pk).values('especialidad').annotate(dcount=Count('especialidad')).order_by()
+        )
 
-    
         for result in results:
             especialidad = Especialidad.objects.get(pk=result["especialidad"]) 
             practicas.append(especialidad.descripcion.upper())
@@ -199,5 +204,44 @@ def ajaxgraficoatencionporescuela(request):
         return JsonResponse(data, safe=False)
 
 
+def renderticket(request, pk):
+    if request.method=="GET":
+        atencion = Atencion.objects.get(pk=pk)
+
+        return render(
+            request, 'atenciones/ticket.html', {'atencion': atencion})
+
+
+def nuevaatencionlink(request, pk):
+    paciente = Paciente.objects.filter(pk=pk)
+
+    if request.POST:
+        form = AtencionLinkForm(request.POST)
+        if form.is_valid():
+            form.save()
+            consulta = Atencion.objects.latest('pk')
+            messages.success(
+                request,
+                "SE HAN GUARDADO LOS DATOS DE LA ATENCION")
+                #return redirect('/pacienteeditar/' + str(consulta.pk))
+            return redirect('/atencioneslistado/?txtBuscar=', str(consulta.pk))
+        else:
+            return render(
+                request,
+                'atenciones/atencion_link.html',
+                {
+                    "form": form,
+                    "paciente": paciente
+                })
+    else:
+        form = AtencionLinkForm()
+        return render(
+            request,
+            'atenciones/atencion_link.html',
+            {
+                "form": form,
+                "paciente": paciente
+            }
+        )
 
 # Create your views here.
