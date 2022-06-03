@@ -20,10 +20,12 @@ def listadoatenciones(request):
         parametro = request.GET.get("txtBuscar")
         if parametro == "":
             #consulta = Atencion.objects.all().order_by('pk')
-            consulta = Atencion.objects.filter(escuela=escueladefault.pk)
+            consulta = Atencion.objects.filter(escuela=escueladefault.pk).order_by('-fecha')
         else:
             if parametro.isnumeric():
                 idatencion = int(parametro)
+            else:
+                idatencion = None
             consulta = Atencion.objects.filter(
                 Q(pk=idatencion) |
                 Q(paciente__apellido__icontains=parametro) |
