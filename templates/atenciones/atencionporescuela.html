@@ -13,6 +13,9 @@
         
         <label for="select-escuela">Escuelas: </label>
         <select class="form-control" id="select-escuela">
+            <option value="0">
+              --------------------------------
+            </option>
           {% for escuela in escuelas%}
             <option value={{escuela.pk}}>
               {{escuela.descripcion.upper}}
@@ -115,7 +118,7 @@
           var xValues = response.practicas;
           //var yValues = [55, 49, 44, 24, 15];
           var yValues = response.cantidades;
-          var barColors = ["red", "green","blue"];
+          var barColors = ["red", "green","blue", "yellow", "orange"];
           console.log(response.practicas)
           console.log(response.cantidades)
           new Chart("myChart", {

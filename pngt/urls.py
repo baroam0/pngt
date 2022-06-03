@@ -20,7 +20,7 @@ from .views import home
 from escuelas.views import listadoescuelas, nuevaescuela, editarescuela
 from medicamentos.views import (
     listadomedicamentos, nuevomedicamento, editarmedicamento, nuevareceta,
-    listadoentregamedicamento, nuevoentregamedicamento)
+    listadoentregamedicamento, nuevoentregamedicamento, editarentregamedicamento)
 
 from pacientes.views import listadopaciente, nuevopaciente, editarpaciente, ajaxpaciente, nuevopacientepreload
 
@@ -48,6 +48,7 @@ urlpatterns = [
     path('escuelaeditar/<int:pk>', editarescuela),
     path('entregamedicamentolistado/', listadoentregamedicamento),
     path('entregamedicamentonuevo/', nuevoentregamedicamento),
+    path('entregamedicamentoeditar/<int:pk>', editarentregamedicamento),
     path('medicamentolistado/', listadomedicamentos),
     path('medicamentonuevo/', nuevomedicamento),
     path('medicamentoeditar/<int:pk>', editarmedicamento),

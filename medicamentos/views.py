@@ -161,12 +161,10 @@ def nuevoentregamedicamento(request):
         form = EntregaMedicamentoForm(request.POST)
         if form.is_valid():
             form.save()
-
             ultimaentrega = EntregaMedicamento.objects.latest('pk')
             medicamento = Medicamento.objects.get(pk=ultimaentrega.medicamento.pk)
             medicamento.cantidad = int(medicamento.cantidad) - int(ultimaentrega.cantidad)
             medicamento.save()
-
             messages.success(
                 request,
                 "SE HAN GUARDADO EL MEDICAMENTO ")
@@ -188,5 +186,31 @@ def nuevoentregamedicamento(request):
             }
         )
 
+
+def editarentregamedicamento(request, pk):
+    consulta = EntregaMedicamento.objects.get(pk=pk)
+    cantidadanterior = consulta.cantidad
+
+    if request.POST:
+        form = EntregaMedicamentoForm(request.POST, instance=consulta)
+        if form.is_valid():
+            entregacantidad = request.POST['cantidad']
+            medicamento = Medicamento.objects.get(pk=consulta.medicamento.pk)
+            medicamento.cantidad = int(medicamento.cantidad) + int(cantidadanterior) - int(entregacantidad)
+            medicamento.save()
+            form.save()
+            messages.success(request, "SE HA MOFICICADO EL MEDICAMENTO")
+            return redirect('/entregamedicamentolistado')
+        else:
+            return render(request, "medicamentos/entregamedicamento_edit.html", {"form": form})
+    else:
+        form = EntregaMedicamentoForm(instance=consulta)
+        return render(
+            request,
+            'medicamentos/entregamedicamento_edit.html',
+            {
+                "form": form,
+            }
+        )
 
 # Create your views here.

@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-sm-4"></div>
             <div class="col-sm-4">
-                <h3>DETALLE ATENCION</h3>
+                <h3>DETALLE PRACTICA</h3>
             </div>
 
             <div class="col-sm-4"></div>
@@ -29,16 +29,6 @@
                     </div>
                 {% endif %}
 
-                {% if paciente_obrassociales %}
-                    
-                    <div class="alert alert-secondary" role="alert">
-                        OBRA SOCIAL: EL PACIENTE POSEE OBRA SOCIAL REGISTRADA
-                        <button type="button" data-toggle="modal" data-target="#modal-obrasocial" class="btn btn-link btn-sm">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-
-                    </div>
-                {% endif %}
             </div>
         </div>
     
@@ -175,31 +165,6 @@
                 }
             });
 
-            $('#id_diagnostico').select2({
-                language: {
-                    inputTooShort: function() {
-                        return 'Por favor ingrese 2 caracteres';
-                    },
-                    noResults: function() {
-                        return "No se encontraron resultados";
-                    },
-                },
-                minimumInputLength: 2,
-                ajax: {
-                    url: '/ajaxcatalogo/',
-                    processResults: function (data) {
-                        return {
-                            results: $.map(data, function (item) {
-                                return {
-                                    text: item.text,
-                                    id: item.id
-                                }
-                            })
-                        };
-                    }
-                }
-            });
-
 
             $('#modal-select-obra-social').select2({
                 language: {
@@ -319,22 +284,11 @@
             editar = false; 
         }
 
-        function IrListadoAtenciones() {
-            window.location.replace("/atencioneslistado");
-        }
-
-        function LimpiarFormularioModal(){
-            $("#id_obrasocial").val("");
-            $("#id_numeroafiliado").val("");
-            $("#id_observaciones").val("");
-        }
-
-        function LimpiarTablaModal(){
-            $("#tabla-pacienteobrasocial > tbody").html("");
+        function IrListadoAtencion() {
+            window.location.replace("/practicaslistado");
         }
 
         function LeerFilaTablaModal(){
-            
             $("#tabla-pacienteobrasocial").on('click','.btnSelect',function(){
                 var fila=$(this).closest("tr");
                 paciente_obrasocial=fila.find("td:eq(0)").text();
