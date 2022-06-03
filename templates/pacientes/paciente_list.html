@@ -50,14 +50,6 @@
                         </button>
                     </div>
 
-
-                    <!--button type="button" class="btn btn-default" title="Imprimir listado!" onclick="javascrit:ReporteListado()">
-                        <i class="fas fa-print"></i>
-                    </button>
-
-                    <button type="button" class="btn btn-default" title="Imprimir listado!" onclick="javascrit:exportTableToExcel()">
-                        <i class="fas fa-file-excel"></i>
-                    </button-->
                 </div>
 
                 <div class="col-1">
@@ -74,6 +66,7 @@
                         <th>Numero Documento</th>
                         <th>Editar</th>
                         <th>Atencion</th>
+                        <th>Receta Médica</th>
                     </tr>
                 </thead>
 
@@ -94,6 +87,13 @@
                                 <i class="fas fa-calendar-alt"></i>
                             </button>
                         </td>
+                        <td>
+                            <button type="button" class="btn btn-link btn-sm" onclick="location.href='/recetanueva/' + {{ resultado.pk }}">
+                                <i class="fas fa-prescription"></i>
+                            </button>
+                        </td>
+
+                        
                     </tr>
                     {% endfor %}
                 </tbody>

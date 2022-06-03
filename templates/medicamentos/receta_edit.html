@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <style>
+        .hidden{
+            display: none
+        }
+    </style>
+
+    <div class="container">
+
+        <br>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <h3>DETALLE RECETA</h3>
+            </div>
+
+            <div class="col-sm-4"></div>
+        </div>    
+
+        <div class="row">
+            <div class="col-12">
+                <hr>
+                <form id="frm_datos" method="POST">{% csrf_token %}
+                    <label>Paciente</label>
+                    {% for pa in paciente %}
+                        <select name="paciente" class="form-control" required="" id="id_paciente">
+                            <option value="{{pa.pk}}">{{pa.apellido}}, {{pa.nombre}} </option>
+                        </select>
+                    {% endfor %}
+                    <br>
+                </form>
+
+
+                <form method="POST">{% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-6">  
+                            <div class="form-group">
+                                <label>{{recetadetalleform.medicamento.label}}</label>
+                                {{recetadetalleform.medicamento}}
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>{{recetadetalleform.cantidad.label}}</label>
+                                {{recetadetalleform.cantidad}}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <hr>
+                <button type="button" class="btn btn-default" title="Agregar Medicamento" onclick="AgregarFilaTabla()" >
+                    <i class="fas fa-plus"></i>
+                </button>
+
+                <br>
+                <br>
+
+                <table class="table table-hover" id="tabla-recetadetalle">
+                    <thead>
+                        <tr>
+                            <th>Medicamento</th>
+                            <th>Cantidad</th>
+                            <th>Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+                <hr>
+                <div class="row">
+                    <div class="col-2">
+                        <button class="btn btn-primary" id="btn-guardar" type="submit">
+                            <i class="fas fa-check"></i>
+                            Aceptar
+                        </button>
+                    </div>
+
+                    <div class="col-8">
+                    </div>
+
+                    <div class="col-2">    
+                        <button type="button" class="btn btn-danger" id="btn-cancelar" onclick="IrListadoAtencion()">
+                            <i class="far fa-times-circle"></i>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+{% endblock %}
+
+
+{% block js_extra %}
+
+    <script>
+        $(document).ready(function () {
+
+        });
+
+        function IrListadoAtencion() {
+            window.location.replace("/atencioneslistado");
+        }
+
+        function QuitarFila(id){
+            var fila = document.getElementById(id);
+            $("#" + fila.id + "").remove();
+        }
+
+
+        function GarbarDetalleReceta(){
+            
+        }
+
+
+        function AgregarFilaTabla(){
+
+            var medicamento = $("#id_medicamento").val();
+
+            const bandera = ValidarMedicamentoRepetido(medicamento);
+
+            if(bandera==true){
+                alert("Ya existe ese medicamento en el detalle de la receta")
+            }else{
+                var paciente = $("#id_paciente").val();
+                var apellidonombrePaciente = $("#id_paciente>option:selected").html();
+                var medicamento = $("#id_medicamento").val();
+                var nombreMedicamento = $("#id_medicamento>option:selected").html();
+                var cantidad = $("#id_cantidad").val(); 
+                if(cantidad==""){
+                    cantidad = 1;
+                }
+                if(medicamento==""){
+                    alert("DEBE ELEGIR UN MEDICAMENTO");
+                }else{
+                    contenido = "<tr id='" + medicamento +  "'>";
+                    contenido = contenido + "<td>"+ nombreMedicamento +"</td>";
+                    contenido = contenido + "<td>" + cantidad + "</td>";
+                    contenido = contenido + "<td><button type='button' class='btn btn-link btn-sm' onclick='QuitarFila(" + medicamento + ")'><i class='fas fa-trash'></i></button></td>"
+                    contenido = contenido + "</tr>";
+                    $("#tabla-recetadetalle tbody").append(contenido);
+                }
+            }
+
+            
+        }
+
+        function ValidarMedicamentoRepetido(medicamento){
+                var tabla = document.getElementById('tabla-recetadetalle');
+                var rowLength = tabla.rows.length;
+                bandera = 0;
+                for(var i=1; i<rowLength; i+=1){
+                    var indice = toString(i);
+                    var row = tabla.rows[i];
+                    var idmedicamento = medicamento;
+                    if(idmedicamento!=row.id){
+                        medicamento = row.id
+                    }else{
+                        return true;
+                    }
+                }
+            }
+
+    </script>
+
+{% endblock %}

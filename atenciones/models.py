@@ -36,7 +36,6 @@ class Atencion(models.Model):
         self.escuela=consultaescuela
         super(Atencion, self).save(*args, **kwargs)
 
-
     class Meta:
         verbose_name_plural = "Atenciones"
 
