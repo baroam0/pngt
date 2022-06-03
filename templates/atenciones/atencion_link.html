@@ -34,6 +34,12 @@
 
                     <hr>
 
+                    <div class="row" id="mensaje" style="display: none;">
+                        <div class="alert alert-danger form-control" role="alert">
+                            <label>ESTE PACIENTE YA TIENE UNA ATENCION CON ESA PRACTICA</label>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-2">
                             <button class="btn btn-primary" id="btn-guardar" type="submit">
@@ -88,116 +94,47 @@
                     },
                 }
             });
-
-            /*
-            $('#id_paciente').select2({
-                language: {
-                    inputTooShort: function() {
-                        return 'Por favor ingrese 3 caracteres';
-                    },
-                    noResults: function() {
-                        return "No se encontraron resultados";
-                    },
-                },
-                minimumInputLength: 3,
-                ajax: {
-                    url: '/ajaxpaciente/',
-                    processResults: function (data) {
-                        return {
-                            results: $.map(data, function (item) {
-                                return {
-                                    text: item.text,
-                                    id: item.id
-                                }
-                            })
-                        };
-                    }
-                }
-            });
-            */
+            document.getElementById("id_especialidad").addEventListener("change", ConsultaAtencion);
 
         });
 
 
-        function GrabarPacienteObraSocial(){
-            LimpiarTablaModal();
 
+        function ConsultaAtencion(){
+            var paciente = $("#id_paciente").val();
+            var especialidad = $("#id_especialidad").val();
+            
+            $.ajax({
+                type: "GET",
+                url: "/ajaxconsultaatencion/",
+                data: {
+                    "especialidad" : especialidad,
+                    "paciente" : paciente
+                }, 
+                success: function (data) {
+                    var divmensaje = document.getElementById("mensaje")
 
-            if(editar==true){
-                EditarPacienteObraSocial()
-            }else{
-
-                var str_url = window.location.href;
-                str_url = str_url.split("/");
-                var id_paciente = str_url.slice(-2)[0]
-
-                var obrasocial = $("#id_obrasocial").val();
-                var numeroafiliado = $("#id_numeroafiliado").val();
-                var observacion = $("#id_observaciones").val();            
-
-                var JsonObj = new Object();
-
-                JsonObj = {
-                    "paciente": id_paciente,
-                    "obrasocial": obrasocial,
-                    "numeroafiliado": numeroafiliado,
-                    "observaciones": observacion,
-                }
-
-                $.ajax({
-                    type: "POST",
-                    url: "/ajax-nuevopacienteobrasocial/",
-                    data: {
-                        datos: JSON.stringify(JsonObj),
-                    }, 
-                    success: function (data) {
-                        $.each(data, function (i, item) {
-                            $('<tr id="' + item.id_obrasocial + '">').append(
-                                $('<td>').text(item.id_pacienteobrasocial),
-                                $('<td>').text(item.descripcion),
-                                $('<td>').text(item.numeroafiliado),
-                                $('<td>').text(item.observaciones),
-                                $('<td>').html('<button type="button" class="btn btn-link btn-sm btnSelect" onclick="javascript:LeerFilaTablaModal()"><i class="fas fa-pencil-alt"></i></button>')).appendTo('#tabla-pacienteobrasocial')
-                        });
-                        LimpiarFormularioModal();
+                    console.log(data.existe);
+                    
+                    if(data.existe=="1"){
+                        console.log("trueeee")
+                        //divmensaje.style.display = 'visible';
+                        document.getElementById("mensaje").style.display = "block";
+                    }else{
+                        console.log("falseeee")
+                        document.getElementById("mensaje").style.display = "none";
+                        //divmensaje.style.display = 'none';
                     }
-                });
-            }
-            editar = false; 
+                }
+            });
+
         }
+
+
                  
         function IrListadoAtencion() {
             window.location.replace("/atencioneslistado");
         }
-
-        function LimpiarFormularioModal(){
-            $("#id_obrasocial").val("");
-            $("#id_numeroafiliado").val("");
-            $("#id_observaciones").val("");
-        }
-
-        function LimpiarTablaModal(){
-            $("#tabla-pacienteobrasocial > tbody").html("");
-        }
-
-        function LeerFilaTablaModal(){
-            
-            $("#tabla-pacienteobrasocial").on('click','.btnSelect',function(){
-                var fila=$(this).closest("tr");
-                paciente_obrasocial=fila.find("td:eq(0)").text();
-
-                var nroafiliado=fila.find("td:eq(2)").text();
-                var observaciones=fila.find("td:eq(3)").text();
-
-                $("#id_obrasocial").val(fila[0].id);
-                $("#id_numeroafiliado").val(nroafiliado);
-                $("#id_observaciones").val(observaciones);
-            });
-
-            editar = true;
-            return editar;
-        }
-
 
     </script>
 

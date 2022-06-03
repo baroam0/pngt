@@ -1,4 +1,5 @@
 
+from datetime import datetime
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Count, QuerySet
@@ -29,9 +30,9 @@ def listadoatenciones(request):
                 Q(paciente__nombre__contains=parametro) |
                 Q(paciente__numerodocumento__contains=parametro) &
                 Q(escuela=escueladefault.pk)
-            ).order_by('pk')
+            ).order_by('-fecha')
     else:
-        consulta = Atencion.objects.all().order_by('pk')
+        consulta = Atencion.objects.all().order_by('-fecha')
 
     paginador = Paginator(consulta, 20)
 
@@ -83,8 +84,8 @@ def editaratencion(request, pk):
         form = AtencionLinkForm(request.POST, instance=consulta)
         if form.is_valid():
             form.save()
-            messages.success(request, "SE HA MOFICICADO EL PACIENTE")
-            return redirect('/pacientelistado')
+            messages.success(request, "SE HA MOFICICADO LA ATENCION")
+            return redirect('/atencioneslistado')
         else:
             return render(request, "atenciones/atencion_link.html", {"form": form, "paciente": paciente})
     else:
@@ -132,7 +133,6 @@ def nuevaespecialidad(request):
             messages.success(
                 request,
                 "SE HAN GUARDADO LOS DATOS DE LA PRACTICA")
-                #return redirect('/pacienteeditar/' + str(consulta.pk))
             return redirect('/practicaslistado', str(consulta.pk))
         else:
             return render(
@@ -243,5 +243,48 @@ def nuevaatencionlink(request, pk):
                 "paciente": paciente
             }
         )
+
+
+def ajaxconsultaatencion(request):
+    
+    if request.is_ajax and request.method == "GET":
+        escuela = Escuela.objects.get(operativo=True)
+        idespecialidad = request.GET.get("especialidad", None)
+        idpaciente = request.GET.get("paciente", None)
+        
+        especialidad = Especialidad.objects.get(pk=int(idespecialidad))
+        paciente = Paciente.objects.get(pk=int(idpaciente))
+        
+        try:
+            atencion = Atencion.objects.filter(
+                paciente=paciente.pk,
+                especialidad=especialidad.pk,
+                escuela=escuela) 
+        except Atencion.DoesNotExist:
+            atencion = None
+        
+        print("///////////////")
+        print(atencion)
+        
+        if atencion:
+            return JsonResponse({"existe":1}, status = 200)
+        else:
+            return JsonResponse({"existe":0}, status = 200)
+
+        
+        """
+        if Friend.objects.filter(nick_name = nick_name).exists():
+
+            # if nick_name found return not valid new friend
+
+            return JsonResponse({"valid":False}, status = 200)
+
+        else:
+
+            # if nick_name not found, then user can create a new friend.
+
+            return JsonResponse({"valid":True}, status = 200)
+        """
+
 
 # Create your views here.

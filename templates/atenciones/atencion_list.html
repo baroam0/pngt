@@ -60,6 +60,7 @@
             <table class="table table-hover" id="tablaDatos">
                 <thead>
                     <tr>
+                        <th>Fecha</th>
                         <th>Apellido</th>
                         <th>Nombre</th>
                         <th>Numero Documento</th>
@@ -71,6 +72,7 @@
                 <tbody>
                     {% for resultado in resultados %}
                     <tr>
+                        <td>{{resultado.fecha }}</td>
                         <td>{{resultado.paciente.apellido.upper }}</td>
                         <td>{{resultado.paciente.nombre.upper }}</td>
                         <td>{{resultado.paciente.numerodocumento}}</td>

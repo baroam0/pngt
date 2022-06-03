@@ -27,12 +27,13 @@ from pacientes.views import listadopaciente, nuevopaciente, editarpaciente, ajax
 from atenciones.views import (
     listadoatenciones, nuevaatencion,editaratencion, listadoespecialidades, 
     nuevaespecialidad, editarespecialidad, ajaxgraficoatencionporescuela, 
-    atencionporescuela, nuevaatencionlink, renderticket
+    atencionporescuela, nuevaatencionlink, renderticket, ajaxconsultaatencion
     )
 
 urlpatterns = [
     path('', home),
     path('admin/', admin.site.urls),
+    path('ajaxconsultaatencion/', ajaxconsultaatencion),
     path('ajaxpaciente/', ajaxpaciente),
     path('atencionporescuela/', atencionporescuela),
     path('ajaxatencionescuela/', ajaxgraficoatencionporescuela),

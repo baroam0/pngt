@@ -98,7 +98,7 @@ def nuevopacientepreload(request, rawdata):
                     request,
                     "SE HAN GUARDADO LOS DATOS DEL PACIENTE " + str(consulta.apellido).upper() + ', ' + str(consulta.nombre).upper())
                 #return redirect('/pacienteeditar/' + str(consulta.pk))
-                return redirect('/pacientelistado')
+                return redirect('/pacientelistado/?txtBuscar=' + str(consulta.numerodocumento))
             else:
                 return render(
                     request,
@@ -202,7 +202,8 @@ def editarpaciente(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "SE HA MOFICICADO EL PACIENTE")
-            return redirect('/pacientelistado')
+            #return redirect('/pacientelistado')
+            return redirect('/pacientelistado/?txtBuscar=' + str(consulta.numerodocumento))
         else:
             return render(request, "pacientes/paciente_nuevo.html", {"form": form})
     else:
