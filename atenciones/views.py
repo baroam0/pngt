@@ -248,7 +248,6 @@ def nuevaatencionlink(request, pk):
 
 
 def ajaxconsultaatencion(request):
-    
     if request.is_ajax and request.method == "GET":
         escuela = Escuela.objects.get(operativo=True)
         idespecialidad = request.GET.get("especialidad", None)
@@ -265,28 +264,19 @@ def ajaxconsultaatencion(request):
         except Atencion.DoesNotExist:
             atencion = None
         
-        print("///////////////")
-        print(atencion)
-        
         if atencion:
             return JsonResponse({"existe":1}, status = 200)
         else:
             return JsonResponse({"existe":0}, status = 200)
 
-        
-        """
-        if Friend.objects.filter(nick_name = nick_name).exists():
 
-            # if nick_name found return not valid new friend
+def ajaxeliminaratencion(request):
+    if request.is_ajax and request.method == "GET":
+        idatencion = request.GET.get("atencion", None)
+        atencion = Atencion.objects.get(pk=int(idatencion))
+        atencion.delete()
+        return JsonResponse({"existe":0}, status = 200)
 
-            return JsonResponse({"valid":False}, status = 200)
-
-        else:
-
-            # if nick_name not found, then user can create a new friend.
-
-            return JsonResponse({"valid":True}, status = 200)
-        """
 
 
 # Create your views here.

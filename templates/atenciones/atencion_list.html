@@ -84,6 +84,9 @@
                             <button type="button" class="btn btn-link btn-sm" onclick="location.href='/renderticket/' + {{ resultado.pk }} ">
                                 <i class="fas fa-print"></i>
                             </button>
+                            <button type="button" class="btn btn-link btn-sm" onclick="EliminarAtencion({{ resultado.pk }})">
+                                <i class="fas fa-trash"></i>
+                            </button>
                             
                         </td>
                     </tr>
@@ -252,6 +255,31 @@
         {
             var htmltemplate ="'<style> body { font-size: 12px; font-family:Calibri; } table { font-size: 12px; font-family:Calibri; } </style> <table style='width:100%'> <tr> <td align ='left'>Fecha</td> <td align ='right'>{{atencion.fecha}}</td> </tr> <tr> <td align ='left'>{{atencion.especialidad.descripcion.upper}}</td> <td align ='right'>{{atencion.paciente.apellido.upper}}, {{atencion.paciente.nombre.upper}}</td>  </tr> <tr> <td align ='left'>Paciente</td> <td align ='right'>{{atencion.paciente}}</td> </tr> </table>"
             Popup(htmltemplate);
+        }
+
+
+        function EliminarAtencion(id){
+
+            if (window.confirm("Esta por eliminar una Atencion. Desea hacerlo?")) {
+                $.ajax({
+                    type: "GET",
+                    url: "/ajaxeliminaratencion/",
+                    data: {
+                        "atencion" : id,
+                    }, 
+                    success: function (data) {
+                        var divmensaje = document.getElementById("mensaje")
+
+                        console.log(data.existe);
+                        
+                        if(data.existe=="1"){
+                            alert("Ha ocurrido un error");
+                        }else{
+                            window.location.reload();    
+                        }
+                    }
+                });
+            }
         }
 
     </script>

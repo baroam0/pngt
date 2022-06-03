@@ -100,16 +100,14 @@
 
 
 
-        function ConsultaAtencion(){
+        function ConsultaAtencion(idatencion){
             var paciente = $("#id_paciente").val();
-            var especialidad = $("#id_especialidad").val();
             
             $.ajax({
                 type: "GET",
                 url: "/ajaxconsultaatencion/",
                 data: {
-                    "especialidad" : especialidad,
-                    "paciente" : paciente
+                    "atencion" : idantecion,
                 }, 
                 success: function (data) {
                     var divmensaje = document.getElementById("mensaje")
@@ -127,7 +125,6 @@
                     }
                 }
             });
-
         }
 
 
