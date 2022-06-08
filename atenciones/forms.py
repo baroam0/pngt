@@ -30,17 +30,19 @@ class AtencionForm(forms.ModelForm):
 class EspecialidadForm(forms.ModelForm):
     descripcion = forms.CharField(
         label="Descripcion", required=True)
+    predeterminada = forms.BooleanField(label="Predeterminada", required=False)
 
     def __init__(self, *args, **kwargs):
         super(EspecialidadForm, self).__init__(*args, **kwargs)
         for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({
-                'class': 'form-control'
-            })
+            if field != "predeterminada":
+                self.fields[field].widget.attrs.update({
+                    'class': 'form-control'
+                })
 
     class Meta:
         model = Especialidad
-        fields = ['descripcion']
+        fields = ['descripcion', 'predeterminada']
 
 
 class AtencionLinkForm(forms.ModelForm):

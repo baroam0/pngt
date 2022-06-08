@@ -62,6 +62,7 @@
                 <thead>
                     <tr>
                         <th>Descripcion</th>
+                        <th>Predeterminada</th>
                         <th>Accion</th>
                     </tr>
                 </thead>
@@ -70,6 +71,15 @@
                     {% for resultado in resultados %}
                     <tr>
                         <td>{{resultado.descripcion.upper }}</td>
+
+                        <td>
+                            {% if resultado.predeterminada == True %}
+                                <i class="fas fa-check-circle"></i>
+                            {% else %}
+                                <i class="fas fa-times-circle"></i>
+                            {% endif %}
+                        </td>
+
                         <td>
                             <button type="button" class="btn btn-link btn-sm" onclick="location.href='/practicaeditar/' + {{ resultado.pk }}">
                                 <i class="fas fa-pencil-alt"></i>

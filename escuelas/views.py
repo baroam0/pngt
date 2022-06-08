@@ -32,7 +32,6 @@ def listadoescuelas(request):
 def nuevaescuela(request):
     if request.POST:
         form = EscuelaForm(request.POST)
-                
         if form.is_valid():
             form.save()
             consulta = Escuela.objects.latest('pk')

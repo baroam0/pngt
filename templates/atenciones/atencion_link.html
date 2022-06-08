@@ -21,16 +21,33 @@
 
                     <label>Paciente</label>
 
-                    {% for pa in paciente %}
-                        <select name="paciente" class="form-control" required="" id="id_paciente">
-                            <option value="{{pa.pk}}">{{pa.apellido}}, {{pa.nombre}} </option>
-                        </select>
-                    {% endfor %}
                     
+                        <select name="paciente" class="form-control" required="" id="id_paciente">
+                            {% for p in paciente %}
+                                <option value="{{p.pk}}">{{p.apellido.upper}}, {{p.nombre.upper}} </option>
+                            {% endfor %}
+                        </select>
                     
                     <br>
                     <label>Especialidad</label>
-                    {{ form.especialidad}}
+                        <select name="especialidad" class="form-control" required="" id="id_especialidad">
+                            {%if especialidadupdate %}
+                                <option value="{{especialidadupdate.pk}}" selected>{{especialidadupdate.descripcion.upper}} </option>
+                                {% for e in especialidades %}
+                                    {% if e.pk != especialidadupdate.pk %}
+                                        <option value="{{e.pk}}">{{e.descripcion.upper}} </option>
+                                    {%endif%}
+                                {% endfor %}
+                            {%else%}
+                                {% for e in especialidades %}
+                                    {% if e.predeterminada == True %}
+                                        <option value="{{e.pk}}" selected>{{e.descripcion.upper}} </option>
+                                    {%else%}
+                                        <option value="{{e.pk}}">{{e.descripcion.upper}} </option>
+                                    {%endif%}
+                                {% endfor %}
+                            {%endif%}
+                        </select>
 
                     <hr>
 
@@ -49,6 +66,11 @@
                         </div>
 
                         <div class="col-8">
+                            <button class="btn btn-primary" id="btn-guardar" type="button" onclick="GrabareImprimir()">
+                                <i class="fas fa-save"></i>
+                                Grabar e Imprimir
+                                <i class="fas fa-print"></i>
+                            </button>
                         </div>
 
                         <div class="col-2">    
@@ -79,35 +101,21 @@
 
         $(document).ready(function () {
 
-            $('#modal-obrasocial').on('shown.bs.modal', function (e) {
-                LimpiarFormularioModal();
-            })
-
-            $('#modal-obrasocial').on('hidden.bs.modal', function (e) {
-                window.location.reload()
-            })
-           
-            $('#id_profesional_tratante').select2({
-                language: {
-                    noResults: function() {
-                        return "No se encontraron resultados";
-                    },
-                }
-            });
             document.getElementById("id_especialidad").addEventListener("change", ConsultaAtencion);
 
         });
 
 
-
-        function ConsultaAtencion(idatencion){
+        function ConsultaAtencion(){
             var paciente = $("#id_paciente").val();
+            var especialidad = $("#id_especialidad").val();
             
             $.ajax({
                 type: "GET",
                 url: "/ajaxconsultaatencion/",
                 data: {
-                    "atencion" : idantecion,
+                    "paciente" : paciente,
+                    "especialidad" : especialidad
                 }, 
                 success: function (data) {
                     var divmensaje = document.getElementById("mensaje")
@@ -115,14 +123,29 @@
                     console.log(data.existe);
                     
                     if(data.existe=="1"){
-                        console.log("trueeee")
-                        //divmensaje.style.display = 'visible';
                         document.getElementById("mensaje").style.display = "block";
                     }else{
-                        console.log("falseeee")
                         document.getElementById("mensaje").style.display = "none";
-                        //divmensaje.style.display = 'none';
                     }
+                }
+            });
+        }
+
+
+        function GrabareImprimir(){
+            var paciente = $("#id_paciente").val();
+            var especialidad = $("#id_especialidad").val();
+            
+            $.ajax({
+                type: "POST",
+                url: "/ajaxgrabareimprimir/",
+                data: {
+                    "paciente" : paciente,
+                    "especialidad" : especialidad
+                }, 
+                success: function (data) {
+                    console.log(data);
+                    location.href= '/renderticket/' + data.atencion
                 }
             });
         }

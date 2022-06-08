@@ -6,6 +6,8 @@ from django.db.models import Count, QuerySet
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
+
 
 from escuelas.models import Escuela
 from pacientes.models import Paciente
@@ -34,7 +36,7 @@ def listadoatenciones(request):
                 Q(escuela=escueladefault.pk)
             ).order_by('-fecha')
     else:
-        consulta = Atencion.objects.all().order_by('-fecha')
+        consulta = Atencion.objects.filter(escuela=escueladefault.pk).order_by('-fecha')
 
     paginador = Paginator(consulta, 20)
 
@@ -48,6 +50,8 @@ def listadoatenciones(request):
 
 
 def nuevaatencion(request):
+    especialidades = Especialidad.objects.all()
+    print(especialidades)
     if request.POST:
         form = AtencionForm(request.POST)
 
@@ -62,25 +66,28 @@ def nuevaatencion(request):
         else:
             return render(
                 request,
-                'atenciones/atencion_nuevo.html',
+                'atenciones/atencion_link.html',
                 {
                     "form": form,
+                    "especialidades": especialidades
                 })
     else:
         form = AtencionForm()
         return render(
             request,
-            'atenciones/atencion_nuevo.html',
+            'atenciones/atencion_link.html',
             {
                 "form": form,
+                "especialidades": especialidades
             }
         )
 
 
 def editaratencion(request, pk):
     consulta = Atencion.objects.get(pk=pk)
-    
     paciente = Paciente.objects.filter(pk=consulta.paciente.pk)
+    especialidad = Especialidad.objects.get(pk=consulta.especialidad.pk)
+    especialidades = Especialidad.objects.all()
     
     if request.POST:
         form = AtencionLinkForm(request.POST, instance=consulta)
@@ -98,7 +105,9 @@ def editaratencion(request, pk):
             'atenciones/atencion_link.html',
             {
                 "form": form,
-                "paciente": paciente
+                "paciente": paciente,
+                "especialidadupdate": especialidad,
+                "especialidades": especialidades
             }
         )
 
@@ -128,14 +137,20 @@ def listadoespecialidades(request):
 def nuevaespecialidad(request):
     if request.POST:
         form = EspecialidadForm(request.POST)
-
         if form.is_valid():
             form.save()
             consulta = Especialidad.objects.latest('pk')
+            if consulta.predeterminada == True:
+                especialidades = Especialidad.objects.all().exclude(pk=consulta.pk)
+                for especialidad in especialidades:
+                    especialidad.predeterminada = False
+                    especialidad.save()
+
             messages.success(
                 request,
-                "SE HAN GUARDADO LOS DATOS DE LA PRACTICA")
-            return redirect('/practicaslistado', str(consulta.pk))
+                "SE HAN GUARDADO DE LA ESEPECIALIDAD")
+                #return redirect('/pacienteeditar/' + str(consulta.pk))
+            return redirect('/practicaslistado')
         else:
             return render(
                 request,
@@ -161,7 +176,14 @@ def editarespecialidad(request, pk):
         form = EspecialidadForm(request.POST, instance=consulta)
         if form.is_valid():
             form.save()
-            messages.success(request, "SE HA MOFICICADO LA PRACTICA")
+            
+            if consulta.predeterminada == True:
+                especialidades = Especialidad.objects.all().exclude(pk=consulta.pk)
+                for e in especialidades:
+                    e.predeterminada = False
+                    e.save()
+            
+            messages.success(request, "SE HA MOFICICADO LA ESPECIALIDAD")
             return redirect('/practicaslistado')
         else:
             return render(request, "atenciones/especialidad_nuevo.html", {"form": form})
@@ -216,6 +238,8 @@ def renderticket(request, pk):
 
 def nuevaatencionlink(request, pk):
     paciente = Paciente.objects.filter(pk=pk)
+    especialidad = Especialidad.objects.all()
+    
 
     if request.POST:
         form = AtencionLinkForm(request.POST)
@@ -233,7 +257,8 @@ def nuevaatencionlink(request, pk):
                 'atenciones/atencion_link.html',
                 {
                     "form": form,
-                    "paciente": paciente
+                    "paciente": paciente,
+                    "especialidades": especialidad
                 })
     else:
         form = AtencionLinkForm()
@@ -242,7 +267,8 @@ def nuevaatencionlink(request, pk):
             'atenciones/atencion_link.html',
             {
                 "form": form,
-                "paciente": paciente
+                "paciente": paciente,
+                "especialidades": especialidad
             }
         )
 
@@ -268,6 +294,23 @@ def ajaxconsultaatencion(request):
             return JsonResponse({"existe":1}, status = 200)
         else:
             return JsonResponse({"existe":0}, status = 200)
+
+
+@csrf_exempt
+def ajaxgrabaratencioneimprimir(request):
+    if request.is_ajax and request.method == "POST":
+        idespecialidad = request.POST.get("especialidad", None)
+        idpaciente = request.POST.get("paciente", None)
+        
+        especialidad = Especialidad.objects.get(pk=int(idespecialidad))
+        paciente = Paciente.objects.get(pk=int(idpaciente))
+        escuela = Escuela.objects.get(operativo=True)
+
+        atencion = Atencion(paciente=paciente,especialidad=especialidad,escuela=escuela)
+        atencion.save()
+        atencion = Atencion.objects.latest('pk')
+
+        return JsonResponse({"atencion": atencion.pk}, status = 200)
 
 
 def ajaxeliminaratencion(request):
