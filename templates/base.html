@@ -62,14 +62,19 @@
           <!--img class="mb-4" src="{% static 'logo_libella_.png' %}" class="img-circle elevation-2"-->  
         </div>
 
-        {% if user.is_authenticated %}
-          <div class="info">
-            <a class="nav-link" tabindex="-1" aria-disabled="true">POR NUESTRA GENTE TODO  </a>
-            
-          </div>
-        {% else %}
-          
-        {% endif %}
+        <style>
+
+          labell {
+            color: white;
+          }
+
+        </style>
+
+        
+        <div class="info">
+          <!--a class="nav-link" tabindex="-1" aria-disabled="false">POR NUESTRA GENTE TODO  </a-->
+          <labell aria-disabled="false">POR NUESTRA GENTE TODO</labell>
+        </div>
         
       </div>
 
