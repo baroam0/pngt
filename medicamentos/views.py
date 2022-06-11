@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 
 from .forms import MedicamentoForm, RecetaForm, RecetaDetalleForm, EntregaMedicamentoForm
 from .models import Medicamento, Receta, RecetaDetalle, EntregaMedicamento
+from escuelas.models import Escuela
 from pacientes.models import Paciente
 
 
@@ -212,5 +213,21 @@ def editarentregamedicamento(request, pk):
                 "form": form,
             }
         )
+
+
+def impresionlistadomedicamento(request):
+    escuela = Escuela.objects.get(operativo=True)
+    parametro = request.GET.get("txtBuscar")
+    resultados = Medicamento.objects.filter(
+                descripcion__icontains=parametro).order_by('descripcion')
+    return render(
+        request,
+        "medicamentos/reporte_listado.html",
+        {
+            "escuela": escuela,
+            "resultados": resultados
+        }
+    )
+    
 
 # Create your views here.
