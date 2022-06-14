@@ -28,7 +28,7 @@
 
     function PrintElem()
     {
-        var htmltemplate ="'<style> body { font-size: 12px; font-family:Calibri; } table { font-size: 12px; font-family:Calibri; } </style> <table style='width:100%'>   <tr>  POR NUETRA GENTE TODO - 2022 <td align ='right'></td> </tr>     <tr> <td align ='left'>FECHA</td> <td align ='right'>{{atencion.fecha}}</td> </tr> <tr> <td align ='left'>ESCUELA</td> <td align ='right'>{{atencion.escuela.descripcion.upper}}</td>  </tr> <tr> <td align ='left'>ATENCION</td> <td align ='right'>{{atencion.especialidad.descripcion.upper}}</td> </tr> <tr> <td align ='left'>Paciente</td> <td align ='right'>{{atencion.paciente.apellido.upper}}, {{atencion.paciente.nombre.upper}}</td> </tr>  </table>"
+        var htmltemplate ="'<style> body { font-size: 12px; font-family:Calibri; } table { font-size: 12px; font-family:Calibri; } </style> <table style='width:100%'>   <tr>  POR NUESTRA GENTE TODO - 2022 <td align ='right'></td> </tr>     <tr> <td align ='left'>FECHA</td> <td align ='right'>{{atencion.fecha}}</td> </tr> <tr> <td align ='left'>ESCUELA</td> <td align ='right'>{{atencion.escuela.descripcion.upper}}</td>  </tr> <tr> <td align ='left'>ATENCION</td> <td align ='right'>{{atencion.especialidad.descripcion.upper}}</td> </tr> <tr> <td align ='left'>Paciente</td> <td align ='right'>{{atencion.paciente.apellido.upper}}, {{atencion.paciente.nombre.upper}}</td> </tr>  <tr> <td align ='left'>Nro Documento</td> <td align ='right'>{{atencion.paciente.numerodocumento}}</td> </tr>  <tr> <td align ='left'>Nro Ticket</td> <td align ='right'>{{atencion.pk}}</td> </tr> </table>"
         Popup(htmltemplate);
     }
 
