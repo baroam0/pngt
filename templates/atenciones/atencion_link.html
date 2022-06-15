@@ -80,9 +80,22 @@
                             </button>
                         </div>
                     </div>
-                    <hr>
+                    <br>
                 </form>
 
+                <table class="table table-hover" id="tablaHistorial">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Escuela</th>
+                            <th>Apellido</th>
+                            <th>Nombre</th>
+                            <th>Especialidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -100,9 +113,8 @@
         var paciente_obrasocial = "";
 
         $(document).ready(function () {
-
             document.getElementById("id_especialidad").addEventListener("change", ConsultaAtencion);
-
+            ConsultaAtencionHistorial();
         });
 
 
@@ -132,6 +144,36 @@
         }
 
 
+        function ConsultaAtencionHistorial(){
+            var paciente = $("#id_paciente").val();
+            
+            $.ajax({
+                type: "GET",
+                url: "/ajaxconsultaatencionhistorial/",
+                data: {
+                    "paciente" : paciente,
+                }, 
+                success: function (data) {
+
+                    $.each(data, function(index, value) {
+                        fecha = new Date(value.fecha);
+                        
+                        
+                        contenido = "<tr>";
+                        contenido = contenido + "<td>"+ fecha.toLocaleDateString() +"</td>";
+                        contenido = contenido + "<td>" + value.escuela__descripcion.toUpperCase() + "</td>";
+                        contenido = contenido + "<td>" + value.paciente__apellido.toUpperCase() + "</td>";
+                        contenido = contenido + "<td>" + value.paciente__nombre.toUpperCase() + "</td>";
+                        contenido = contenido + "<td>" + value.especialidad__descripcion.toUpperCase() + "</td>";
+                        contenido = contenido + "</tr>";
+                        $("#tablaHistorial tbody").append(contenido);
+                        
+                    });
+                }
+            });
+        }
+
+
         function GrabareImprimir(){
             var paciente = $("#id_paciente").val();
             var especialidad = $("#id_especialidad").val();
@@ -150,11 +192,15 @@
             });
         }
 
-
-                 
+   
         function IrListadoAtencion() {
             window.location.replace("/atencioneslistado");
         }
+
+        function LimpiarTabla() {   
+            $("#tablaHistorial > tbody").html("");
+        } 
+
 
     </script>
 

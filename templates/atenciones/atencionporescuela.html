@@ -104,8 +104,9 @@
 
     });
 
-
+    
     function GrafBarra(escuela){
+      
       $.ajax({
         type: "GET",
         url: "/ajaxatencionescuela/",
@@ -113,7 +114,6 @@
           "escuela": escuela,
         },
         success: function (response) {
-          
           //var xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
           var xValues = response.practicas;
           //var yValues = [55, 49, 44, 24, 15];
@@ -121,7 +121,10 @@
           var barColors = ["red", "green","blue", "yellow", "orange"];
           console.log(response.practicas)
           console.log(response.cantidades)
-          new Chart("myChart", {
+
+          var chart = "";
+        
+          chart = new Chart("myChart", {
             type: "bar",
             data: {
               labels: xValues,
@@ -138,8 +141,7 @@
                 text: response.escuela
               }
             }
-            
-          });
+          }); 
         }
       });
     }
@@ -180,9 +182,7 @@
 
     $("#select-escuela").change(function() {
       var escuela = $("#select-escuela").val();
-
       GrafBarra(escuela);
-
     });
 
 

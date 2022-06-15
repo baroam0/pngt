@@ -28,12 +28,13 @@ from atenciones.views import (
     listadoatenciones, nuevaatencion,editaratencion, listadoespecialidades, 
     nuevaespecialidad, editarespecialidad, ajaxgraficoatencionporescuela, 
     atencionporescuela, nuevaatencionlink, renderticket, ajaxconsultaatencion,
-    ajaxeliminaratencion, ajaxgrabaratencioneimprimir)
+    ajaxconsultaatencionhistorial, ajaxeliminaratencion, ajaxgrabaratencioneimprimir)
 
 urlpatterns = [
     path('', home),
     path('admin/', admin.site.urls),
     path('ajaxconsultaatencion/', ajaxconsultaatencion),
+    path('ajaxconsultaatencionhistorial/', ajaxconsultaatencionhistorial),
     path('ajaxgrabareimprimir/', ajaxgrabaratencioneimprimir),
     path('ajaxeliminaratencion/', ajaxeliminaratencion),
     path('ajaxpaciente/', ajaxpaciente),

@@ -1,8 +1,10 @@
 
 from datetime import datetime
 from django.contrib import messages
+from django.core import serializers
 from django.core.paginator import Paginator
 from django.db.models import Count, QuerySet
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.db.models import Q
@@ -294,6 +296,22 @@ def ajaxconsultaatencion(request):
             return JsonResponse({"existe":1}, status = 200)
         else:
             return JsonResponse({"existe":0}, status = 200)
+
+
+def ajaxconsultaatencionhistorial(request):
+    if request.is_ajax and request.method == "GET":
+        idpaciente = request.GET.get("paciente", None)
+        paciente = Paciente.objects.get(pk=int(idpaciente))
+        atenciones = list(
+            Atencion.objects.filter(paciente=paciente).values(
+                'fecha',
+                'paciente__apellido',
+                'paciente__nombre',
+                'escuela__descripcion',
+                'especialidad__descripcion'
+            )
+        )
+        return JsonResponse(atenciones, safe=False)
 
 
 @csrf_exempt
