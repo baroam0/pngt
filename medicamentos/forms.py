@@ -2,7 +2,10 @@
 from django import forms
 from django.contrib.auth.models import User
 
-from.models import Medicamento, Unidad, Receta, RecetaDetalle, EntregaMedicamento
+from.models import (
+    Medicamento, Unidad, Receta, RecetaDetalle, EntregaMedicamento,
+    PresentacionMedica, RecepcionaMedicamento)
+
 from pacientes.models import Paciente
 
 
@@ -12,6 +15,8 @@ class MedicamentoForm(forms.ModelForm):
     cantidad = forms.IntegerField(label="Cantidad(*)", required=True)
     unidad = forms.ModelChoiceField(
         queryset=Unidad.objects.all(), label="Unidad(*)", required=True)
+    presentacion = forms.ModelChoiceField(
+        queryset=PresentacionMedica.objects.all(), label="Unidad(*)", required=True)
 
     def __init__(self, *args, **kwargs):
         super(MedicamentoForm, self).__init__(*args, **kwargs)
@@ -22,7 +27,7 @@ class MedicamentoForm(forms.ModelForm):
 
     class Meta:
         model = Medicamento
-        fields = ['descripcion', 'unidad', 'cantidad']
+        fields = ['descripcion', 'presentacion', 'unidad', 'cantidad']
 
 
 class RecetaForm(forms.ModelForm):
@@ -63,6 +68,7 @@ class RecetaDetalleForm(forms.ModelForm):
 
 
 class EntregaMedicamentoForm(forms.ModelForm):
+    fecha_formulario = forms.DateField(label="Fecha", required=True)
     medicamento = forms.ModelChoiceField(
         queryset=Medicamento.objects.all(),
         label="Medicamento(*)",
@@ -79,4 +85,41 @@ class EntregaMedicamentoForm(forms.ModelForm):
 
     class Meta:
         model = EntregaMedicamento
-        fields = ['medicamento', 'cantidad']
+        fields = [ 'fecha_formulario', 'medicamento', 'cantidad']
+
+
+class RecepcionMedicamentoForm(forms.ModelForm):
+    fecha_formulario = forms.DateField(label="Fecha", required=True)
+    medicamento = forms.ModelChoiceField(
+        queryset=Medicamento.objects.all(),
+        label="Medicamento(*)",
+        required=True
+    )
+    cantidad = forms.IntegerField(label="Cantidad(*)", required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(RecepcionMedicamentoForm, self).__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+    class Meta:
+        model = RecepcionaMedicamento
+        fields = [ 'fecha_formulario', 'medicamento', 'cantidad']
+
+
+class PresentacionMedicaForm(forms.ModelForm):
+    descripcion = forms.CharField(
+        label="Descripcion(*)", required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(PresentacionMedicaForm, self).__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })
+
+    class Meta:
+        model = PresentacionMedica
+        fields = ['descripcion']

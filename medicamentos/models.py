@@ -16,12 +16,30 @@ class Unidad(models.Model):
         verbose_name_plural = "Unidades de Medicamentos"
 
 
+class PresentacionMedica(models.Model):
+    descripcion = models.CharField(
+        max_length=100, unique=True, blank=False, null=False)
+
+    def __str__(self):
+        return self.descripcion
+
+    class Meta:
+        verbose_name_plural = "Presentaciones Medicas"
+
+
 class Medicamento(models.Model):
     descripcion = models.CharField(
         max_length=100, unique=True, blank=False, null=False)
     cantidad = models.IntegerField()
     unidad = models.ForeignKey(
         Unidad, default=1, on_delete=models.CASCADE)
+
+    presentacion = models.ForeignKey(
+        PresentacionMedica,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
 
     def __str__(self):
         return self.descripcion
@@ -66,6 +84,7 @@ class RecetaDetalle(models.Model):
 
 class EntregaMedicamento(models.Model):
     fecha = models.DateTimeField(auto_now=True)
+    fecha_formulario = models.DateField(null=True, blank=True)
     medicamento = models.ForeignKey(
         Medicamento, on_delete=models.CASCADE)
     cantidad = models.IntegerField(
@@ -84,6 +103,21 @@ class EntregaMedicamento(models.Model):
 
     class Meta:
         verbose_name_plural = "Entregas de Medicamentos"
+
+
+class RecepcionaMedicamento(models.Model):
+    fecha = models.DateTimeField(auto_now=True)
+    fecha_formulario = models.DateField(null=True, blank=True)
+    medicamento = models.ForeignKey(
+        Medicamento, null=True, blank=True, on_delete=models.CASCADE)
+    cantidad = models.IntegerField(
+        null=False, blank=False)
+
+    def __str__(self):
+        return str(self.fecha)
+
+    class Meta:
+        verbose_name_plural = "Recepciones de Medicamentos"
 
 
 # Create your models here.

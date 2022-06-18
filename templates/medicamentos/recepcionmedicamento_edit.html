@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-sm-4"></div>
             <div class="col-sm-4">
-                <h3>DETALLE DE MEDICAMENTO</h3>
+                <h3>RECEPCION DE MEDICAMENTO</h3>
             </div>
 
             <div class="col-sm-4"></div>
@@ -48,7 +48,7 @@
                         </div>
 
                         <div class="col-2">    
-                            <button type="button" class="btn btn-danger" id="btn-cancelar" onclick="IrListadoMedicamento()">
+                            <button type="button" class="btn btn-danger" id="btn-cancelar" onclick="IrListadoRecepcionMedicamento()">
                                 <i class="far fa-times-circle"></i>
                                 Cancelar
                             </button>
@@ -179,8 +179,8 @@
             editar = false; 
         }
 
-        function IrListadoMedicamento() {
-            window.location.replace("/medicamentolistado");
+        function IrListadoRecepcionMedicamento() {
+            window.location.replace("/recepcionmedicamentolistado");
         }
 
         function LimpiarFormularioModal(){

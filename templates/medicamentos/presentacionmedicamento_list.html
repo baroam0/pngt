@@ -8,11 +8,11 @@
         <br>
         
         <div class="row">
-            <div class="col-sm-4"></div>
-            <div class="col-sm-4">
-                <h3> LISTADO DE MEDICAMENTOS</h3>
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                <h3> LISTADO DE PRESENTACIONES MEDICAS</h3>
             </div>
-            <div class="col-sm-4"></div>
+            <div class="col-sm-3"></div>
         </div>
         
         <hr>
@@ -47,15 +47,11 @@
 
                         &nbsp;&nbsp;&nbsp;
 
-                        <button type="button" class="btn btn-default" title="Nuevo Medicamento" onclick="location.href='/medicamentonuevo'">
+                        <button type="button" class="btn btn-default" title="Nuevo Medicamento" onclick="location.href='/presentacionmedicanuevo'">
                             <i class="fas fa-plus"></i>
                         </button>
 
                         &nbsp;&nbsp;&nbsp;
-
-                        <button type="button" class="btn btn-default" title="Impresion Medicamento" onclick="javascrit:ReporteListado()">
-                            <i class="fas fa-print"></i>
-                        </button>
                     </div>
 
                 </div>
@@ -70,9 +66,6 @@
                 <thead>
                     <tr>
                         <th>Descripcion</th>
-                        <th>Presentacion</th>
-                        <th>Unidad</th>
-                        <th>Cantidad</th>
                         <th>Editar</th>
                     </tr>
                 </thead>
@@ -81,11 +74,8 @@
                     {% for resultado in resultados %}
                     <tr>
                         <td>{{resultado.descripcion.upper }}</td>
-                        <td>{{resultado.presentacion.descripcion.upper }}</td>
-                        <td>{{resultado.unidad.descripcion.upper }}</td>
-                        <td>{{resultado.cantidad}}</td>
                         <td>
-                            <button type="button" class="btn btn-link btn-sm" onclick="location.href='/medicamentoeditar/' + {{ resultado.pk }}">
+                            <button type="button" class="btn btn-link btn-sm" onclick="location.href='/presentacionmedicaeditar/' + {{ resultado.pk }}">
                                 <i class="fas fa-pencil-alt"></i>
                             </button>
                         </td>

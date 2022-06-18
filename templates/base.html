@@ -20,6 +20,11 @@
   <link rel="stylesheet" href="{% static 'plugins/jqvmap/jqvmap.min.css'%}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css'%}">
+  
+  <!-- JQuery-UI -->
+  <link rel="stylesheet" href="{% static 'dist/css/jquery-ui.css'%}">
+
+
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="{% static 'plugins/overlayScrollbars/css/OverlayScrollbars.min.css'%}">
   <!-- Daterange picker -->
@@ -223,6 +228,27 @@
                   </a>
                 </li>
               </ul>
+
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="/presentacionmedicalistado/" class="nav-link">
+                    <i class="fas fa-bars"></i>
+                    <p>Listado de Presentaciones Medicas</p>
+                  </a>
+                </li>
+              </ul>
+
+
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="/recepcionmedicamentolistado/" class="nav-link">
+                    <i class="fas fa-download"></i>
+                    <p>Listado de Recepcion de Medicamentos</p>
+                  </a>
+                </li>
+              </ul>
+
+
             </li>
 
             <li class="nav-item has-treeview">
@@ -349,6 +375,8 @@
 <script src="{% static 'plugins/moment/locale/es.js'%}"></script>
 
 <script src="{% static 'plugins/daterangepicker/daterangepicker.js'%}"></script>
+
+<script src="{% static 'plugins/datepicker-es/bootstrap-datepicker.es.js'%}"></script>
 
 <!-- Tempusdominus Bootstrap 4 -->
 <script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js'%}"></script>

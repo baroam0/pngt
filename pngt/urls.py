@@ -18,9 +18,13 @@ from django.urls import path
 
 from .views import home
 from escuelas.views import listadoescuelas, nuevaescuela, editarescuela
+
 from medicamentos.views import (
     listadomedicamentos, nuevomedicamento, editarmedicamento, nuevareceta,
-    listadoentregamedicamento, nuevoentregamedicamento, editarentregamedicamento, impresionlistadomedicamento)
+    listadoentregamedicamento, nuevoentregamedicamento, editarentregamedicamento,
+    impresionlistadomedicamento, listadopresentacionmedica, nuevapresentacionmedica,
+    editarpresentacionmedica, listadorecepcionmedicamento, nuevarecepcionmedicamento,
+    editarrecepcionmedicamento)
 
 from pacientes.views import listadopaciente, nuevopaciente, editarpaciente, ajaxpaciente, nuevopacientepreload
 
@@ -62,5 +66,13 @@ urlpatterns = [
     path('pacientenuevo/', nuevopaciente),
     path('pacientenuevopreload/<str:rawdata>', nuevopacientepreload),
     path('pacienteeditar/<int:pk>', editarpaciente),
-    path('renderticket/<int:pk>', renderticket)
+    path('renderticket/<int:pk>', renderticket),
+    #PRESENTACION MEDICA
+    path('presentacionmedicalistado/', listadopresentacionmedica),
+    path('presentacionmedicanuevo/', nuevapresentacionmedica),
+    path('presentacionmedicaeditar/<int:pk>', editarpresentacionmedica),
+    #RECEPCION MEDICAMENTO MEDICA
+    path('recepcionmedicamentolistado/', listadorecepcionmedicamento),
+    path('recepcionmedicamentonuevo/', nuevarecepcionmedicamento),
+    path('presentacionmedicaeditar/<int:pk>', editarrecepcionmedicamento),
 ]
